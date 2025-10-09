@@ -4,7 +4,7 @@ import { enVars } from './app/config/env'
 
 const startServer = async() => {
     try{
-        await mongoose.connect(enVars.MONGODB_URI)
+        await 
     console.log('Connected To MongoDB')
 
     app.listen(enVars.PORT, () => {
