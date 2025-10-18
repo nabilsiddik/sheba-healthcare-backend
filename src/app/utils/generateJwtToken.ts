@@ -14,3 +14,7 @@ export const generateJwtToken = (payload: JWTPayload, secret: Secret, expiresIn:
 
     return token
 }
+
+export const verifyToken = (token: string, secret: Secret) => {
+    return jwt.verify(token, secret) as JWTPayload
+}

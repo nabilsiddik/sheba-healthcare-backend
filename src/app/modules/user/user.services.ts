@@ -5,12 +5,71 @@ import { createPatientInput } from "./user.interfaces";
 import bcrypt from 'bcrypt'
 import { fileUploader } from "../../utils/fileUploder";
 import { envVars } from "../../config/env";
-import { UserRole, UserStatus } from "@prisma/client";
+import { Prisma, UserRole, UserStatus } from "@prisma/client";
+import calculatePagination from "../../utils/pagination";
+import { userSearchableFields } from "./user.constants";
+
+
+// Get all users from db
+const getAllUsers = async (params: any, options: any) => {
+    const { page, limit, skip, sortOrder, sortBy } = calculatePagination(options)
+    const { searchTerm, ...filterData } = params
+
+    const andConditions: Prisma.UserWhereInput[] = []
+
+    if (searchTerm) {
+        andConditions.push({
+            OR: userSearchableFields.map((field) => ({
+                [field]: {
+                    contains: searchTerm,
+                    mode: 'insensitive'
+                }
+            }))
+        })
+    }
+
+    if(Object.keys(filterData).length > 0){
+        andConditions.push({
+            AND: Object.keys(filterData).map((key) => ({
+                [key]: {
+                    equals: filterData[key]
+                }
+            }))
+        })
+    }
+
+    const whereConditions: Prisma.UserWhereInput = andConditions.length > 0 ? {
+        AND: andConditions
+    } : {}
+
+    const total = await prisma.user.count({
+        where: whereConditions
+    })
+
+    const result = await prisma.user.findMany({
+        skip,
+        take: limit,
+        where: whereConditions,
+        orderBy: {
+            [sortBy]: sortOrder
+        }
+    })
+
+    return {
+        meta: {
+            page,
+            limit,
+            total
+        },
+        data: result
+    }
+}
+
 
 // Create patient
 const createPatient = async (req: Request) => {
 
-    if(req?.file){
+    if (req?.file) {
         const uploadedResult = await fileUploader.uploadToCloudinary(req.file)
         req.body.patient.profilePhoto = uploadedResult?.secure_url
     }
@@ -19,7 +78,7 @@ const createPatient = async (req: Request) => {
         where: { email: req?.body?.patient?.email }
     })
 
-    if(existingUser){
+    if (existingUser) {
         throw new AppError(400, 'A user with this email already exist.')
     }
 
@@ -50,16 +109,16 @@ const createPatient = async (req: Request) => {
 
 // Create admin
 const createAdmin = async (req: Request) => {
-    if(req?.file){
+    if (req?.file) {
         const uploadResult = await fileUploader.uploadToCloudinary(req?.file)
         req.body.admin.profilePhoto = uploadResult?.secure_url
     }
 
     const existingUser = await prisma.user.findUnique({
-        where: {email: req.body.admin.email}
+        where: { email: req.body.admin.email }
     })
 
-    if(existingUser){
+    if (existingUser) {
         throw new AppError(400, 'A user with this email already exist.')
     }
 
@@ -71,7 +130,7 @@ const createAdmin = async (req: Request) => {
         role: UserRole.ADMIN
     }
 
-    const result = prisma.$transaction(async(tnx) => {
+    const result = prisma.$transaction(async (tnx) => {
         const createdUser = await tnx.user.create({
             data: userData
         })
@@ -80,7 +139,7 @@ const createAdmin = async (req: Request) => {
             data: req.body.admin
         })
 
-        return {createdUser, createdAdmin}
+        return { createdUser, createdAdmin }
     })
 
     return result
@@ -89,16 +148,16 @@ const createAdmin = async (req: Request) => {
 
 // Create Doctor
 const createDoctor = async (req: Request) => {
-    if(req?.file){
+    if (req?.file) {
         const uploadResult = await fileUploader.uploadToCloudinary(req?.file)
         req.body.doctor.profilePhoto = uploadResult?.secure_url
     }
 
     const existingUser = await prisma.user.findUnique({
-        where: {email: req.body.doctor.email}
+        where: { email: req.body.doctor.email }
     })
 
-    if(existingUser){
+    if (existingUser) {
         throw new AppError(400, 'A user with this email already exist.')
     }
 
@@ -110,7 +169,7 @@ const createDoctor = async (req: Request) => {
         role: UserRole.DOCTOR
     }
 
-    const result = prisma.$transaction(async(tnx) => {
+    const result = prisma.$transaction(async (tnx) => {
         const createdUser = await tnx.user.create({
             data: userData
         })
@@ -119,16 +178,17 @@ const createDoctor = async (req: Request) => {
             data: req.body.doctor
         })
 
-        return {createdUser, createdDoctor}
+        return { createdUser, createdDoctor }
     })
 
     return result
 }
- 
 
 
- 
+
+
 export const UserServices = {
+    getAllUsers,
     createPatient,
     createAdmin,
     createDoctor

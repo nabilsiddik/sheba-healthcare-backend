@@ -1,8 +1,8 @@
 import express, { Request, Response } from 'express'
 import { router } from './app/routes'
 import cors from 'cors'
-import cookieParser from 'cookie-parser'
 import { envVars } from './app/config/env'
+import cookieParser from 'cookie-parser'
 
 export const app = express()
 
