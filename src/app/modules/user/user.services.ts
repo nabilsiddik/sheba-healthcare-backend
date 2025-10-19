@@ -1,11 +1,10 @@
 import { Request } from "express";
 import { prisma } from "../../config/db.config";
 import AppError from "../../errorHelpers/appError";
-import { createPatientInput } from "./user.interfaces";
 import bcrypt from 'bcrypt'
 import { fileUploader } from "../../utils/fileUploder";
 import { envVars } from "../../config/env";
-import { Prisma, UserRole, UserStatus } from "@prisma/client";
+import { Prisma, UserRole } from "@prisma/client";
 import calculatePagination from "../../utils/pagination";
 import { userSearchableFields } from "./user.constants";
 
