@@ -2,6 +2,7 @@ import { addMinutes, addHours, format } from 'date-fns'
 import { prisma } from '../../config/db.config'
 import calculatePagination from '../../utils/pagination'
 import { Prisma } from '@prisma/client'
+import AppError from '../../errorHelpers/appError'
 
 
 // Get all Schedules for doctor
@@ -122,7 +123,30 @@ const createSchedule = async (payload: any) => {
 
 }
 
+
+// Delete a schedule
+const deleteSchedule = async(scheduleId: string) => {
+    const schedule = await prisma.schedule.findUnique({
+        where: {
+            id: scheduleId
+        }
+    })
+
+    if(!schedule){
+        throw new AppError(404, 'Schedule not found')
+    }
+
+    const result = prisma.schedule.delete({
+        where: {
+            id: scheduleId
+        }
+    }) 
+
+    return result
+}
+
 export const ScheduleServices = {
     createSchedule,
-    getAllSchedulesForDoctor
+    getAllSchedulesForDoctor,
+    deleteSchedule
 }

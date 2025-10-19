@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { UserControllers } from "./user.controllers";
-import validateRequest from "../../middlewares/validateRequest";
 import { UserValidation } from "./user.validation";
 import { fileUploader } from "../../utils/fileUploder";
 import { UserRole } from "@prisma/client";
-import { checkAuth } from "../../utils/checkAuth";
+import { checkAuth } from "../../middlewares/checkauth";
 
 const userRouter = Router()
 
