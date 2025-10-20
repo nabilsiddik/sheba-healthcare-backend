@@ -1,9 +1,10 @@
 import { NextFunction, Request, RequestHandler, Response } from "express"
 import { envVars } from "../config/env"
 import { verifyToken } from "../utils/generateJwtToken"
+import { JWTPayload } from "../interfaces"
 
 export const checkAuth = (...roles: string[]) => {
-    return async (req: Request & {user?: any}, res: Response, next: NextFunction) => {
+    return async (req: Request & {user?: JWTPayload}, res: Response, next: NextFunction) => {
         try {
             const token = req.cookies.accessToken
 

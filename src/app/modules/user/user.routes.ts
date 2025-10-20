@@ -3,7 +3,7 @@ import { UserControllers } from "./user.controllers";
 import { UserValidation } from "./user.validation";
 import { fileUploader } from "../../utils/fileUploder";
 import { UserRole } from "@prisma/client";
-import { checkAuth } from "../../middlewares/checkauth";
+import { checkAuth } from "../../middlewares/checkAuth";
 
 const userRouter = Router()
 

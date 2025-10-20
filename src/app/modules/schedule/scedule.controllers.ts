@@ -5,15 +5,16 @@ import { ScheduleServices } from './scedule.services';
 import { sendResponse } from '../../utils/userResponse';
 import { pickQueries } from '../../utils/pickQueries';
 import { scheduleFilterableFields } from './schedule.constants';
+import { JWTPayload } from '../../interfaces';
 
 
 // Get all schedules for doctor
-const getAllSchedulesForDoctor = catchAsync(async (req: Request, res: Response) => {
-
+const getAllSchedulesForDoctor = catchAsync(async (req: Request & {user?: JWTPayload}, res: Response) => {
+    const user = req.user
     const filters = pickQueries(req.query, scheduleFilterableFields)
     const options = pickQueries(req.query, ['page', 'limit', 'sortBy', 'sortOrder'])
 
-    const result = await ScheduleServices.getAllSchedulesForDoctor(filters, options)
+    const result = await ScheduleServices.getAllSchedulesForDoctor(filters, options, user as JWTPayload)
 
     sendResponse(res, {
         statusCode: 200,

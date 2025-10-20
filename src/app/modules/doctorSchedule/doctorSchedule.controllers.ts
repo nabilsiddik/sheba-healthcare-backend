@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import { catchAsync } from "../../errorHelpers/catchAsync"
 import { sendResponse } from "../../utils/userResponse"
 import { DoctorScheduleServices } from "./doctorSchedule.services"
+import { JWTPayload } from "../../interfaces"
 
 // Get Loged in doctor schedules
 const getLogedInDoctorSchedules = catchAsync(async (req: Request & {user?: any}, res: Response) => {
@@ -18,11 +19,11 @@ const getLogedInDoctorSchedules = catchAsync(async (req: Request & {user?: any},
 })
 
 // Create schedule
-const createDoctorSchedule = catchAsync(async (req: Request & {user?: any}, res: Response) => {
+const createDoctorSchedule = catchAsync(async (req: Request & {user?: JWTPayload}, res: Response) => {
 
     const user = req.user
 
-    const result = await DoctorScheduleServices.createDoctorSchedules(req.body, user)
+    const result = await DoctorScheduleServices.createDoctorSchedules(req.body, user as JWTPayload)
 
     sendResponse(res, {
         statusCode: 201,

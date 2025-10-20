@@ -73,13 +73,9 @@ const createPatient = async (req: Request) => {
         req.body.patient.profilePhoto = uploadedResult?.secure_url
     }
 
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.user.findUniqueOrThrow({
         where: { email: req?.body?.patient?.email }
     })
-
-    if (existingUser) {
-        throw new AppError(400, 'A user with this email already exist.')
-    }
 
     const hashedPassword = await bcrypt.hash(req?.body?.password, Number(envVars.SALT_ROUND))
 
@@ -113,13 +109,10 @@ const createAdmin = async (req: Request) => {
         req.body.admin.profilePhoto = uploadResult?.secure_url
     }
 
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.user.findUniqueOrThrow({
         where: { email: req.body.admin.email }
     })
 
-    if (existingUser) {
-        throw new AppError(400, 'A user with this email already exist.')
-    }
 
     const hashedPassword: string = await bcrypt.hash(req.body.password, Number(envVars.SALT_ROUND))
 
@@ -152,13 +145,10 @@ const createDoctor = async (req: Request) => {
         req.body.doctor.profilePhoto = uploadResult?.secure_url
     }
 
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.user.findUniqueOrThrow({
         where: { email: req.body.doctor.email }
     })
 
-    if (existingUser) {
-        throw new AppError(400, 'A user with this email already exist.')
-    }
 
     const hashedPassword: string = await bcrypt.hash(req.body.password, Number(envVars.SALT_ROUND))
 

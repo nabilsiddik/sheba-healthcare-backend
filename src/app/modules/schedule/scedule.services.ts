@@ -3,10 +3,11 @@ import { prisma } from '../../config/db.config'
 import calculatePagination from '../../utils/pagination'
 import { Prisma } from '@prisma/client'
 import AppError from '../../errorHelpers/appError'
+import { JWTPayload } from '../../interfaces'
 
 
 // Get all Schedules for doctor
-const getAllSchedulesForDoctor = async(filters: any, options: any) => {
+const getAllSchedulesForDoctor = async(filters: any, options: any, user: JWTPayload) => {
     const { page, limit, skip, sortOrder, sortBy } = calculatePagination(options)
     const { startDateTime: filterStartDateTime, endDateTime: filterEndDateTime } = filters
 
@@ -34,18 +35,45 @@ const getAllSchedulesForDoctor = async(filters: any, options: any) => {
         AND: andConditions
     } : {}
 
-    const total = await prisma.schedule.count({
-        where: whereConditions
+    const doctorSchedules = await prisma.doctorSchedule.findMany({
+        where: {
+            doctor: {
+                email: user.email
+            }
+        },
+        select: {
+            scheduleId: true
+        }
     })
+
+    const doctorScheduleIds = doctorSchedules.map(schedule => schedule.scheduleId)
+
+    console.log(doctorScheduleIds)
 
     const result = await prisma.schedule.findMany({
         skip,
         take: limit,
-        where: whereConditions,
+        where: {
+            ...whereConditions,
+            id: {
+                notIn: doctorScheduleIds
+            }
+        },
         orderBy: {
             [sortBy]: sortOrder
         }
     })
+
+    
+    const total = await prisma.schedule.count({
+        where: {
+            ...whereConditions,
+            id: {
+                notIn: doctorScheduleIds
+            }
+        }
+    })
+
 
     return {
         meta: {
