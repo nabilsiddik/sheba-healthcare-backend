@@ -17,6 +17,12 @@ const globalErrorHandler = (err: any, req: Request, res: Response, next: NextFun
             statusCode = StatusCodes.CONFLICT
         }
 
+        if(err.code === 'P2025'){
+            message = 'Record not found'
+            error = err.meta
+            statusCode = StatusCodes.NOT_FOUND
+        }
+
         if (err.code === 'P1000') {
             message = 'Authentication failed against database server'
             error = err.meta

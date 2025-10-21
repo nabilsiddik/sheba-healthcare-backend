@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { ScheduleControllers } from "./scedule.controllers";
 import { UserRole } from "@prisma/client";
-import { checkAuth } from "../../middlewares/checkauth";
+import { checkAuth } from "../../middlewares/checkAuth";
 
 const scheduleRouter = Router()
 
