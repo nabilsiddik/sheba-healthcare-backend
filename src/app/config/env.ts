@@ -14,11 +14,12 @@ interface EnvConfig {
         CLOUDINARY_CLOUD_NAME: string,
         CLOUDINARY_API_KEY: string,
         CLOUDINARY_API_SECRET: string
-    }
+    },
+    OPEN_ROUTER_API_KEY: string
 }
 
 const loadEnvVariables = (): EnvConfig => {
-    const requiredEnvVars: string[] = ['PORT', 'DATABASE_URL', 'JWT_ACCESS_SECRET', 'NODE_ENV', 'SALT_ROUND', 'CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET', 'JWT_ACCESS_SECRET', 'JWT_REFRESH_SECRET']
+    const requiredEnvVars: string[] = ['PORT', 'DATABASE_URL', 'JWT_ACCESS_SECRET', 'NODE_ENV', 'SALT_ROUND', 'CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET', 'JWT_ACCESS_SECRET', 'JWT_REFRESH_SECRET', 'OPEN_ROUTER_API_KEY']
 
     requiredEnvVars.forEach((key: string) => {
         if (!process.env[key]) {
@@ -39,7 +40,8 @@ const loadEnvVariables = (): EnvConfig => {
             CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,
             CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY as string,
             CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET as string,
-        }
+        },
+        OPEN_ROUTER_API_KEY: process.env.OPEN_ROUTER_API_KEY as string
     }
 }
 

@@ -3,6 +3,10 @@ import calculatePagination, { IOptions } from "../../utils/pagination";
 import { doctorSearchableFields } from "./doctor.constants";
 import { prisma } from "../../config/db.config";
 import { IDoctorUpdateInput } from "./doctor.interfaces";
+import AppError from "../../errorHelpers/appError";
+import { StatusCodes } from "http-status-codes";
+import { openai } from "../../helpers/shebaOpenRouterAi";
+import { extractJsonFromMessage } from "../../helpers/extractJsonFromMessage";
 
 // Get all doctors
 const getAllDoctors = async (filters: any, options: IOptions) => {
@@ -136,7 +140,60 @@ const updateDoctor = async (id: string, payload: Partial<IDoctorUpdateInput>) =>
 
 }
 
+// Get AI Suggessions
+const getAISuggessions = async (payload: { symptoms: string }) => {
+    if (!(payload && payload.symptoms)) {
+        throw new AppError(StatusCodes.BAD_REQUEST, 'Symtoms is required')
+    }
+
+    const doctors = await prisma.doctor.findMany({
+        where: { isDeleted: false },
+        include: {
+            doctorSpecialties: {
+                include: {
+                    specialities: true
+                }
+            }
+        }
+    })
+
+    console.log('doctors data loaded')
+    // Prompt
+    const prompt = `
+        You are a medical assistant AI. Based on the patient's symptoms, suggest the top 3 most suitable doctors.
+        Each doctor has specialties and years of experience.
+        Only suggest doctors who are relevant to the given symptoms.
+
+        Symptoms: ${payload.symptoms}
+
+        Here is the doctor list (in JSON):
+        ${JSON.stringify(doctors, null, 2)}
+
+        Return your response in JSON format with full individual doctor data. 
+    `;
+
+    console.log('doctors data analyzing...')
+    const completion = await openai.chat.completions.create({
+        model: 'z-ai/glm-4.5-air:free',
+        messages: [
+            {
+                role: 'system',
+                content: 'You are a helpful AI medical assistant that provides doctor suggestions.',
+            },
+            {
+                role: 'user',
+                content: prompt
+            }
+        ],
+    });
+
+    const result = extractJsonFromMessage(completion.choices[0].message)
+
+    return result
+}
+
 export const DoctorServices = {
     getAllDoctors,
-    updateDoctor
-}
+    updateDoctor,
+    getAISuggessions
+} 

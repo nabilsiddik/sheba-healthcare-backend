@@ -7,6 +7,8 @@ doctorRouter.get(
     DoctorControllers.getAllDoctors
 )
 
+doctorRouter.post('/suggession', DoctorControllers.getAISuggessions)
+
 doctorRouter.patch(
     "/:id",
     DoctorControllers.updateDoctor
