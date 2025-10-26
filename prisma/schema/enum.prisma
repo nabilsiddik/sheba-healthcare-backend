@@ -17,3 +17,16 @@ enum Gender {
   FEMALE
   OTHERS
 }
+
+
+enum AppointmentStatus {
+  SCHEDULED
+  INPROGRESS
+  COMPLETED
+  CANCLED
+}
+
+enum PaymentStatus {
+  PAID
+  UNPAID
+}

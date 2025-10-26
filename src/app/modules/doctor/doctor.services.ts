@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Doctor, Prisma } from "@prisma/client";
 import calculatePagination, { IOptions } from "../../utils/pagination";
 import { doctorSearchableFields } from "./doctor.constants";
 import { prisma } from "../../config/db.config";
@@ -82,6 +82,29 @@ const getAllDoctors = async (filters: any, options: IOptions) => {
         data: result
     }
 }
+
+// Get doctor by id
+const getDoctorById = async (id: string): Promise<Doctor | null> => {
+    const result = await prisma.doctor.findUnique({
+        where: {
+            id,
+            isDeleted: false,
+        },
+        include: {
+            doctorSpecialties: {
+                include: {
+                    specialities: true,
+                },
+            },
+            doctorSchedules: {
+                include: {
+                    schedule: true
+                }
+            }
+        },
+    });
+    return result;
+};
 
 // Update doctor
 const updateDoctor = async (id: string, payload: Partial<IDoctorUpdateInput>) => {
@@ -195,5 +218,6 @@ const getAISuggessions = async (payload: { symptoms: string }) => {
 export const DoctorServices = {
     getAllDoctors,
     updateDoctor,
-    getAISuggessions
+    getAISuggessions,
+    getDoctorById
 } 

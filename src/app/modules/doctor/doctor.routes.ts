@@ -6,7 +6,10 @@ doctorRouter.get(
     "/",
     DoctorControllers.getAllDoctors
 )
-
+doctorRouter.get(
+    "/:id",
+    DoctorControllers.getDoctorById
+)
 doctorRouter.post('/suggession', DoctorControllers.getAISuggessions)
 
 doctorRouter.patch(

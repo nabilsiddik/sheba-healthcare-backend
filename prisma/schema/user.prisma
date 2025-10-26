@@ -48,6 +48,8 @@ model Doctor {
 
   doctorSchedules   DoctorSchedule[]
   doctorSpecialties DoctorSpecialties[]
+  appointments Appointment[]
+  prescriptions Prescription[]
 
   user User @relation(fields: [email], references: [email])
 
@@ -65,6 +67,9 @@ model Patient {
   isDeleted     Boolean  @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  appointments Appointment[]
+  prescriptions Prescription[]
 
   user User @relation(fields: [email], references: [email])
 

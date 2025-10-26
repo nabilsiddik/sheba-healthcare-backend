@@ -6,6 +6,8 @@ model Schedule {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
+    appointments Appointment[]
+
     @@map("schedules")
 }
 

@@ -35,6 +35,18 @@ const updateDoctor = catchAsync(async (req: Request, res: Response) => {
     })
 })
 
+// Get doctor by id
+const getDoctorById = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await DoctorServices.getDoctorById(id);
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Doctor retrieval successfully',
+        data: result,
+    });
+});
+
 
 // Get AI Suggessions
 const getAISuggessions = catchAsync(async (req: Request, res: Response) => {
@@ -53,5 +65,6 @@ const getAISuggessions = catchAsync(async (req: Request, res: Response) => {
 export const DoctorControllers = {
     getAllDoctors,
     updateDoctor,
-    getAISuggessions
+    getAISuggessions,
+    getDoctorById
 }
