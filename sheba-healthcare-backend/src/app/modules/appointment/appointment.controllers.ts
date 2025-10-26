@@ -33,7 +33,24 @@ const getMyAppointment = catchAsync(async (req: Request & { user?: JWTPayload },
     })
 })
 
+
+const updateAppointmentStatus = catchAsync(async (req: Request & { user?: JWTPayload }, res: Response) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    const user = req.user;
+
+    const result = await AppointmentServices.updateAppointmentStatus(id, status, user as JWTPayload);
+
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Appointment updated successfully!",
+        data: result
+    })
+})
+
 export const AppointmentControllers = {
     bookAppointment,
-    getMyAppointment
+    getMyAppointment,
+    updateAppointmentStatus
 }

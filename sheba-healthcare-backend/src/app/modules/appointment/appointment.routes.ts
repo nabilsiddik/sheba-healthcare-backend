@@ -17,4 +17,10 @@ appointmentRoute.post(
     AppointmentControllers.bookAppointment
 )
 
+appointmentRoute.patch(
+    "/status/:id",
+    checkAuth(UserRole.ADMIN, UserRole.DOCTOR),
+    AppointmentControllers.updateAppointmentStatus
+)
+
 export default appointmentRoute
