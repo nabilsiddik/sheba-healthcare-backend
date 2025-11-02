@@ -14,6 +14,8 @@ model Appointment {
     updatedAt      DateTime          @updatedAt
     prescription   Prescription?
 
+    reviews Review[]
+
     @@map("appointment")
 }
 
@@ -45,4 +47,20 @@ model Prescription {
     updatedAt     DateTime    @updatedAt
 
     @@map("prescription")
+}
+
+model Review {
+    id            String      @id @default(uuid())
+    patientId     String
+    patient       Patient     @relation(fields: [patientId], references: [id])
+    doctorId      String
+    doctor        Doctor      @relation(fields: [doctorId], references: [id])
+    appointmentId String      @unique
+    appointment   Appointment @relation(fields: [appointmentId], references: [id])
+    rating        Int
+    comment       String?
+    createdAt     DateTime    @default(now())
+    updatedAt     DateTime    @updatedAt
+
+    @@map("reviews")
 }

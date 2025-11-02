@@ -100,7 +100,8 @@ const getDoctorById = async (id: string): Promise<Doctor | null> => {
                 include: {
                     schedule: true
                 }
-            }
+            },
+            reviews: true
         },
     });
     return result;

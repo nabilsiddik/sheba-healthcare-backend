@@ -37,6 +37,7 @@ model Doctor {
   contactNumber      String
   address            String?
   registrationNumber String
+  averageRating       Float    @default(0.0)
   experience         Int      @default(0)
   gender             Gender
   appointmentFee     Int
@@ -50,6 +51,7 @@ model Doctor {
   doctorSpecialties DoctorSpecialties[]
   appointments Appointment[]
   prescriptions Prescription[]
+  reviews Review[]
 
   user User @relation(fields: [email], references: [email])
 
@@ -70,6 +72,9 @@ model Patient {
 
   appointments Appointment[]
   prescriptions Prescription[]
+  patientHealthData PatientHealthData?
+  medicalReports    MedicalReport[]
+  reviews Review[]
 
   user User @relation(fields: [email], references: [email])
 
