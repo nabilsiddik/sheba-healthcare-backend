@@ -5,6 +5,8 @@ import { sendResponse } from '../../utils/userResponse';
 import { UserServices } from './user.services';
 import { pickQueries } from './../../utils/pickQueries';
 import { userFilterableFields, userSearchableFields } from './user.constants';
+import { JWTPayload } from '../../interfaces';
+import { StatusCodes } from 'http-status-codes';
 
 
 // Get all users from db
@@ -21,6 +23,21 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
     data: result
   })
 })
+
+// Get user profile info
+const getMyProfile = catchAsync(async (req: Request & { user?: JWTPayload }, res: Response) => {
+
+    const user = req.user;
+
+    const result = await UserServices.getMyProfile(user as JWTPayload);
+
+    sendResponse(res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: "My profile data fetched!",
+        data: result
+    })
+});
 
 
 // Create patient
@@ -61,9 +78,27 @@ const createDoctor = catchAsync(async (req: Request, res: Response) => {
 })
 
 
+// Update user profile status
+const changeProfileStatus = catchAsync(async (req: Request, res: Response) => {
+
+    const { id } = req.params;
+    const result = await UserServices.changeProfileStatus(id, req.body)
+
+    sendResponse(res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: "Users profile status changed!",
+        data: result
+    })
+});
+
+
+
 export const UserControllers = {
   getAllUsers,
   createPatient,
   createAdmin,
-  createDoctor
+  createDoctor,
+  getMyProfile,
+  changeProfileStatus
 }

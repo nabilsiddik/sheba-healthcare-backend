@@ -12,6 +12,13 @@ const userRouter = Router()
 // Get all users 
 userRouter.get('/', checkAuth(UserRole.ADMIN), UserControllers.getAllUsers)
 
+// Get profile info
+userRouter.get(
+    '/profile',
+    checkAuth(UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT),
+    UserControllers.getMyProfile
+)
+
 // Ceate patient route
 userRouter.post('/create-patient',
      fileUploader.upload.single('file'),
@@ -34,6 +41,13 @@ userRouter.post('/create-doctor',
      validateRequest(UserValidation.createDoctorValidationSchema),
      UserControllers.createDoctor
 )
+
+userRouter.patch(
+    '/:id/status',
+    checkAuth(UserRole.ADMIN),
+    UserControllers.changeProfileStatus
+);
+
 
 
 export default userRouter
